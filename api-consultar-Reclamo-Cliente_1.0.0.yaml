@@ -1,0 +1,99 @@
+---
+swagger: "2.0"
+info:
+  x-ibm-name: "consultar-Reclamo-Cliente"
+  title: "Consultar_Reclamo_Cliente"
+  version: "1.0.0"
+schemes:
+- "https"
+host: "$(catalog.host)"
+basePath: "/cliente/v1"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+securityDefinitions:
+  clientIdHeader:
+    type: "apiKey"
+    in: "header"
+    name: "X-IBM-Client-Id"
+security:
+- clientIdHeader: []
+x-ibm-configuration:
+  testable: true
+  enforced: true
+  cors:
+    enabled: true
+  assembly:
+    execute:
+    - switch:
+        title: "switch"
+        case:
+        - condition: "((request.verb==='GET')&&(api.operation.path==='/consultar'))"
+          execute:
+          - gatewayscript:
+              title: "gatewayscript"
+              version: "1.0.0"
+              source: "var  response = \r\n{\r\n    \"tipDocumento\": \"DNI\",\r\n\
+                \    \"numDocumento\": \"12345678\",\r\n    \"codCliente\": \"C00021\"\
+                ,\r\n    \"nombres\": \"Ever Alejandro\",\r\n    \"apellidos\": \"\
+                Justo Chacon\",\r\n    \"fecha_Nacimiento\": \"10/08/1997\",\r\n \
+                \   \"productos\": [\r\n        {\r\n            \"codProducto\":\
+                \ \"PRO0001\",\r\n            \"nomProducto\": \"TV\",\r\n       \
+                \     \"tecnologia\": \"satelital\",\r\n            \"status\": \"\
+                active\"\r\n        },\r\n        {\r\n            \"codProducto\"\
+                : \"PRO0002\",\r\n            \"nomProducto\": \"INTERNET\",\r\n \
+                \           \"tecnologia\": \"fibra optica\",\r\n            \"status\"\
+                : \"active\"\r\n        }\r\n    ]\r\n};\r\n\r\napim.setvariable('message.body',\
+                \ response, 'set');\r\napim.setvariable('message.status.code', '200');\r\
+                \napim.setvariable('message.headers.content-type', 'application/json');"
+        - condition: "((request.verb==='POST')&&(api.operation.path==='/registrarReclamo'))"
+          execute:
+          - gatewayscript:
+              title: "gatewayscript"
+              version: "1.0.0"
+              source: "var  response = \r\n{\r\n    \"cod_Respuesta\": \"0\",\r\n\
+                \    \"msg_Respuesta\": \"Procesos Exitoso\",\r\n    \"codigoReclamo\"\
+                : \"Codigo Reclamo es: PR00011234372580356\"\r\n};\r\n\r\napim.setvariable('message.body',\
+                \ response, 'set');\r\napim.setvariable('message.status.code', '201');\r\
+                \napim.setvariable('message.headers.content-type', 'application/json');"
+        version: "1.0.0"
+    - activity-log:
+        title: "activity-log"
+        content: "activity"
+        error-content: "payload"
+        version: "1.0.0"
+  phase: "realized"
+  properties:
+    target-url:
+      value: "http://localhost:8080"
+      description: ""
+      encoded: false
+  catalogs:
+    Sandbox:
+      properties:
+        target-url: "http://localhost:8080"
+paths:
+  /consultar:
+    get:
+      responses:
+        200:
+          description: "200 OK"
+      parameters:
+      - name: "api_parameter-1"
+        type: "string"
+        required: false
+        in: "query"
+  /registrarReclamo:
+    post:
+      responses:
+        201:
+          description: "200 OK"
+      parameters:
+      - name: "request"
+        required: false
+        in: "body"
+        schema:
+          type: "object"
+definitions: {}
+tags: []
